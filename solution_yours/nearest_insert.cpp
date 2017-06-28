@@ -48,7 +48,6 @@ void inputfile(vector<city>& cities)
 		ifs>>first;
 
 		string str;
-		double d;
 
 		int i=0;
 		
@@ -65,13 +64,13 @@ void inputfile(vector<city>& cities)
 	}
 }
 
-void outputresult(vector<city> cycle)
+void outputresult(vector<city> tour)
 {
 	ofstream ofs("solution_yours_0.csv");
 
 	ofs << "index" << endl;
-	for (int i = 0; i != cycle.size(); i++) {
-		ofs << cycle[i].citynumber << endl;
+	for (int i = 0; i != tour.size(); i++) {
+		ofs << tour[i].citynumber << endl;
 	}
 
 	ofs.close();
@@ -114,9 +113,9 @@ void all_cities_distance(vector<vector<double> >& distance,vector<city> cities)
 	}
 }
 
-pair<int,int> min_citygroups(vector<city> cities_a, vector<city> cities_b, vector<vector<double> > distance)
+pair<int,int> shortest_btw_citygroups(vector<city> cities_a, vector<city> cities_b, vector<vector<double> > distance)
 {
-	pair<int, int> min_between_groups;
+	pair<int, int> shortestedge;
 
 	double min = 100000000;
 	int mincity_a = 0; int mincity_b = 0;
@@ -131,10 +130,10 @@ pair<int,int> min_citygroups(vector<city> cities_a, vector<city> cities_b, vecto
 			}
 		}
 	}
-	min_between_groups.first = mincity_a;
-	min_between_groups.second = mincity_b;
+	shortestedge.first = mincity_a;
+	shortestedge.second = mincity_b;
 
-	return min_between_groups;
+	return shortestedge;
 }
 
 
@@ -144,15 +143,13 @@ void nearest_insert(vector<city>& unvisited_cities, vector<city>& visited_cities
 {
 	while (unvisited_cities.size() != 0) {
 		pair<int, int> min_visited_unvisited;
-		min_visited_unvisited = min_citygroups(visited_cities, unvisited_cities,distance);
+		min_visited_unvisited = shortest_btw_citygroups(visited_cities, unvisited_cities,distance);
 
 		int newcitynumber=min_visited_unvisited.second;
 		int nearest_new_number=min_visited_unvisited.first;
 
 		city newcity = unvisited_cities[min_visited_unvisited.second];
 		city nearest_new = visited_cities[min_visited_unvisited.first];
-
-
 
 		visited_cities.insert(visited_cities.begin() + nearest_new_number + 1, newcity);
 		unvisited_cities.erase(unvisited_cities.begin() + newcitynumber);
@@ -164,7 +161,6 @@ void nearest_insert(vector<city>& unvisited_cities, vector<city>& visited_cities
 int main()
 {
 	vector<city> cities;
-
 	inputfile(cities);
 
 	cout<<"input finished"<<endl;
@@ -174,25 +170,26 @@ int main()
 
 	cout<<"distance finished"<<endl;
 
+
 	vector<city> visited_cities;
 	vector<city> unvisited_cities = cities;
 
 	visited_cities.push_back(cities[0]);
 	unvisited_cities.erase(unvisited_cities.begin());
-
 	nearest_insert(unvisited_cities, visited_cities, cities, distance);
 
 	cout<<"nearest_insert finished"<<endl;
 
 	outputresult(visited_cities);
 
+	
 	double totaldistance=0.0;
-
 	for (int i = 1; i != visited_cities.size(); i++) {
 		totaldistance+=distance[visited_cities[i].citynumber][visited_cities[i - 1].citynumber];
 	}
+	int last_city_number=visited_cities[visited_cities.size()-1].citynumber;
+	totaldistance+=distance[last_city_number][0];
 
-	totaldistance+=distance[visited_cities[visited_cities.size()-1].citynumber][0];
 	cout << totaldistance << endl;
 	
 	return 0;

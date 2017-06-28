@@ -37,7 +37,7 @@ void split(vector<string>& str,string& input,char delimeter)
 
 void inputfile(vector<city>& cities)
 {
-	ifstream ifs("input_6.csv");
+	ifstream ifs("input_0.csv");
 
 	if (ifs.fail()) {
 		cout << "fail" << endl;
@@ -67,7 +67,7 @@ void inputfile(vector<city>& cities)
 
 void outputresult(vector<city> cycle)
 {
-	ofstream ofs("solution_yours_6.csv");
+	ofstream ofs("solution_yours_0.csv");
 
 	ofs << "index" << endl;
 	for (int i = 0; i != cycle.size(); i++) {

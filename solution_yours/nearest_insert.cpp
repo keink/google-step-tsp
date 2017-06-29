@@ -37,7 +37,7 @@ void split(vector<string>& str,string& input,char delimeter)
 
 void inputfile(vector<city>& cities)
 {
-	ifstream ifs("input_0.csv");
+	ifstream ifs("input_6.csv");
 
 	if (ifs.fail()) {
 		cout << "fail" << endl;
@@ -66,7 +66,7 @@ void inputfile(vector<city>& cities)
 
 void outputresult(vector<city> tour)
 {
-	ofstream ofs("solution_yours_0.csv");
+	ofstream ofs("solution_yours_6.csv");
 
 	ofs << "index" << endl;
 	for (int i = 0; i != tour.size(); i++) {
@@ -74,6 +74,16 @@ void outputresult(vector<city> tour)
 	}
 
 	ofs.close();
+}
+
+void ij_range_swap(vector<city>& swapcities,int i,int j){
+	int k=j-i;
+	
+	for(int l=0;l<=k/2;l++){
+		city a=swapcities[i+l];
+		swapcities[i+l]=swapcities[j-l];
+		swapcities[j-l]=a;		
+	}
 }
 
 int binarysearch(vector<city> a, int k)
@@ -158,6 +168,25 @@ void nearest_insert(vector<city>& unvisited_cities, vector<city>& visited_cities
 	}
 }
 
+void local_search(vector<city>& current_tour,vector<vector<double> >& distance){
+	for(int i=0;i!=current_tour.size()-3;i++){
+		for(int j=i+2;j!=current_tour.size()-1;j++){
+
+			int i_city=current_tour[i].citynumber;
+			int i_nextcity=current_tour[i+1].citynumber;
+			int j_city=current_tour[j].citynumber;
+			int j_nextcity=current_tour[j+1].citynumber;
+
+			double current_edge_distance=distance[i_city][i_nextcity]+distance[j_city][j_nextcity];
+			double swapped_edge_distance=distance[i_city][j_city]+distance[i_nextcity][j_nextcity];
+			
+			if(swapped_edge_distance<current_edge_distance){
+				ij_range_swap(current_tour,i+1,j);
+			}
+		}
+	}
+}
+
 int main()
 {
 	vector<city> cities;
@@ -180,17 +209,25 @@ int main()
 
 	cout<<"nearest_insert finished"<<endl;
 
-	outputresult(visited_cities);
 
-	
-	double totaldistance=0.0;
-	for (int i = 1; i != visited_cities.size(); i++) {
-		totaldistance+=distance[visited_cities[i].citynumber][visited_cities[i - 1].citynumber];
+	visited_cities.push_back(cities[0]);
+	cout<<"local search start"<<endl;
+
+	for(int i=0;i<=5;i++){
+		local_search(visited_cities,distance);
 	}
-	int last_city_number=visited_cities[visited_cities.size()-1].citynumber;
-	totaldistance+=distance[last_city_number][0];
 
-	cout << totaldistance << endl;
+	double new_totaldistance=0.0;
+
+	cout<<"new tour"<<endl;
+	for (int i = 1; i != visited_cities.size(); i++) {
+		new_totaldistance+=distance[visited_cities[i].citynumber][visited_cities[i - 1].citynumber];
+	}
+	cout<<new_totaldistance<<endl;
+
+	visited_cities.pop_back();
+
+	outputresult(visited_cities);
 	
 	return 0;
 }

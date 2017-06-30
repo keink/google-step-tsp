@@ -213,6 +213,7 @@ int main()
 	visited_cities.push_back(cities[0]);
 	cout<<"local search start"<<endl;
 
+	//local_search一回だけではまだ交差が存在する可能性があるので繰り返す
 	for(int i=0;i<=5;i++){
 		local_search(visited_cities,distance);
 	}

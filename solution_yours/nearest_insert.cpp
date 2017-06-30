@@ -86,24 +86,6 @@ void ij_range_swap(vector<city>& swapcities,int i,int j){
 	}
 }
 
-int binarysearch(vector<city> a, int k)
-{
-	int ret = -1;
-
-	int low = 0; int high = a.size() - 1;
-
-	while (low <= high) {
-		int middle = (low + high) / 2;
-		if (k == a[middle].citynumber) {
-			ret = middle;
-			break;
-		}
-		else if (k > a[middle].citynumber)low = middle + 1;
-		else high = middle - 1;	
-	}
-	return ret;
-}
-
 double two_cities_distance(city a, city b)
 {
 	double distance;
